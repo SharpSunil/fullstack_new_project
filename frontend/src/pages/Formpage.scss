@@ -5,35 +5,44 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    
+    h2{
+      color: white;
+      margin-bottom: 20px; 
+      font-size: 30px; 
+    }
     
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 5px;
+      align-items: center;justify-content: center;
       margin-bottom: 15px;
       width: 100%;
       border: 1px solid rgba(255, 255, 255, 0.233);
       padding: 20px;
       border-radius: 5px;
       background: rgba(255, 255, 255, 0.041);
-      width:370px;
-      label {
-        font-weight: 600;
-        color:white;
-      }
+      width:400px;
+     
       input,
       textarea,
       select {
+        width:100%;
         padding: 10px;
         border-radius: 5px;
         border: 1px solid rgba(0, 0, 0, 0.2);
         font-size: 1rem;
+        margin-bottom: 20px;
         &:focus {
           outline: none;
           border: 1px solid var(--accent);
           box-shadow: 0 0 5px var(--accent);
         }
+      }
+      
+      .files{
+           border: 1px solid rgba(255, 255, 255, 0.233);
+           color: white;
       }
     }
   }
