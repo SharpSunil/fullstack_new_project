@@ -1,96 +1,87 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import "./Popup.scss";
+import { useNavigate } from "react-router-dom";
 
 const PopupPage = () => {
-  const [position, setPosition] = useState(null);
-  const [showWarning, setShowWarning] = useState(false);
-  const [trackingTime, setTrackingTime] = useState(0);
-
-  const boxRef = useRef(null);
   const noBtnRef = useRef(null);
-  const intervalRef = useRef(null);
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
 
-  const startTracking = () => {
-    if (!intervalRef.current) {
-      intervalRef.current = setInterval(() => {
-        setTrackingTime((prev) => {
-          const newTime = prev + 1;
+  const [timeUp, setTimeUp] = useState(false);
 
-          if (newTime >= 10) {
-            setShowWarning(true);
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-          }
+  // 🔥 Move NO button
+  const moveButton = () => {
+    if (timeUp) return; // stop moving after timeout
 
-          return newTime;
-        });
-      }, 1000);
-    }
+    const btn = noBtnRef.current;
+    const container = containerRef.current;
+
+    const containerRect = container.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    const maxX = containerRect.width - btnRect.width;
+    const maxY = containerRect.height - btnRect.height;
+
+    const randomX = Math.floor(Math.random() * maxX);
+    const randomY = Math.floor(Math.random() * maxY);
+
+    btn.style.left = `${randomX}px`;
+    btn.style.top = `${randomY}px`;
+
+    btn.style.bottom = "auto";
+    btn.style.right = "auto";
   };
 
-  const moveButton = () => {
-    startTracking();
+  // 🔥 10 second timer
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeUp(true);
+    }, 10000);
 
-    const box = boxRef.current;
-    const btn = noBtnRef.current;
+    return () => clearTimeout(timer);
+  }, []);
 
-    if (box && btn) {
-      const boxRect = box.getBoundingClientRect();
-      const btnRect = btn.getBoundingClientRect();
-
-      const maxX = boxRect.width - btnRect.width;
-      const maxY = boxRect.height - btnRect.height;
-
-      const randomX = Math.random() * maxX;
-      const randomY = Math.random() * maxY;
-
-      setPosition({
-        left: randomX,
-        top: randomY,
-      });
-    }
+  const handleYesClick = () => {
+    navigate("/popup");
   };
 
   return (
     <div className="popup-parent">
-      <div className="popup-cont">
-        <div className="content-box" ref={boxRef}>
+      <div className="popup-cont" ref={containerRef}>
+        <div className="heading-box">
 
-          {!showWarning ? (
+          {!timeUp ? (
             <>
-              <h2>Popup Heading</h2>
-              <p>Try to click NO 😏</p>
+              <h1 className="heading">Popup Page</h1>
+              <p>This is a sample popup page content.</p>
 
-              <div className="btn-group">
-                <button className="btn yes-btn">YES</button>
-
-                <button
-                  ref={noBtnRef}
-                  className="btn no-btn"
-                  onMouseEnter={moveButton}
-                  style={
-                    position
-                      ? {
-                        position: "absolute",
-                        left: position.left,
-                        top: position.top,
-                        zIndex: 10,
-                      }
-                      : {}
-                  }
-                >
-                  NO
+              <div className="button-group">
+                <button className="btn" onClick={handleYesClick}>
+                  Yes
                 </button>
+                <button className="btn new-no">NO</button>
               </div>
+
+              <button
+                ref={noBtnRef}
+                onMouseEnter={moveButton}
+                className="btn new-button"
+              >
+                NO
+              </button>
             </>
           ) : (
             <>
-              <div className="final-warning">
-                <h2>Goli Mar Dunga 🔫</h2>
-                <p>Ache se Bata raha YES click kr le 😈</p>
-              </div>
+              <h1 className="heading danger-text">
+                Goli mar dunga 😡
+              </h1>
+              <p className="danger-subtext">
+                Ache se bata raha yes button click karle
+              </p>
 
-              <button className="btn yes-btn big-yes">YES</button>
+              <button className="btn big-yes" onClick={handleYesClick}>
+                YES
+              </button>
             </>
           )}
 
